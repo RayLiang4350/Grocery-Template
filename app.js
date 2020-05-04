@@ -3,6 +3,11 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const categoryService = require('./entities_service/Category');
+const fs = require("fs");
+const appSettings = JSON.parse(fs.readFileSync("appSettings.json"));
+const dbUri = appSettings.database.mongo_uri;
+const Dbclient = require('./dbManager');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -37,5 +42,35 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
+async function doSomething()
+{
+   var client = new Dbclient();
+   //var response1 = await categoryService.createCategory(dbUri,'Grocery','drink',client);
+   var response2 = await categoryService.renameCollection(dbUri,'Grocery',client,'drink','food');
+   //var response2 = await categoryService.deleteCategory(dbUri,'Grocery','drink',client);
+  //  if (response1.result=='fail')
+  //  {
+  //    console.log('response1:');
+  //    console.log(response1.reason);
+  //  }
+  //  else
+  //  {
+  //    console.log('create success');
+  //  }
+   if (response2.result=='fail')
+   {
+     console.log('response2:');
+     console.log(response2.reason);
+   }
+   else
+   {
+     console.log('delete success');
+   }
+}
+
+doSomething()
+
 
 module.exports = app;
