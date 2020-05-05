@@ -48,7 +48,7 @@ async function doSomething()
 {
    var client = new Dbclient();
    //var response1 = await categoryService.createCategory(dbUri,'Grocery','drink',client);
-   var response2 = await categoryService.renameCollection(dbUri,'Grocery',client,'drink','food');
+   var response2 = await categoryService.renameCollection(dbUri,'Grocery',client,'chicken','Chicken');
    //var response2 = await categoryService.deleteCategory(dbUri,'Grocery','drink',client);
   //  if (response1.result=='fail')
   //  {
@@ -66,7 +66,7 @@ async function doSomething()
    }
    else
    {
-     console.log('delete success');
+     console.log('rename success');
    }
 }
 

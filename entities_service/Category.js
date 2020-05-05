@@ -1,42 +1,55 @@
-var dbClient = require('../dbManager');
 var db_exception = require('../exceptions/db_exception');
 async function createCategory(uri,dbname,collectionName,client)
 {
-    await client.init(uri,dbname);
-    var indication = await containsCollection(client,collectionName);
-    if (!indication)
+    var response = await client.init(uri,dbname);
+    if(response.result=='success')
     {
-        await client.db.createCollection(collectionName);
-        client.closeDb();
-        return JSON.parse("{\"result\":\"success\"}");
+        var indication = await containsCollection(client,collectionName);
+        if (!indication)
+        {
+            await client.db.createCollection(collectionName);
+            client.closeDb();
+            return JSON.parse("{\"result\":\"success\"}");
+        }
+        else
+        {
+            client.closeDb();
+            return JSON.parse("{\"result\":\"fail\",\"type\":\"operation error\",\"reason\":\"duplicate collection\"}");
+        }
     }
     else
     {
-        client.closeDb();
-        return JSON.parse("{\"result\":\"fail\",\"type\":\"operation error\",\"reason\":\"duplicate collection\"}");
+        return response;
     }
 }
 async function deleteCategory(uri,dbname,collectionName,client)
 {
-    await client.init(uri,dbname);
-    var indication = await containsCollection(client,collectionName);
-    if(indication)
+    var response = await client.init(uri,dbname);
+    if(response.result=='success')
     {
-        try{
-            await client.db.collection(collectionName).drop();
-            client.closeDb();
-            return JSON.parse("{\"result\":\"success\"}");
+        var indication = await containsCollection(client,collectionName);
+        if(indication)
+        {
+            try{
+                await client.db.collection(collectionName).drop();
+                client.closeDb();
+                return JSON.parse("{\"result\":\"success\"}");
+            }
+            catch (e){
+                client.closeDb();
+                var content = JSON.parse("{\"result\":\"fail\",\"type\":\"db error\",\"reason\":\"MongoError: "+e.message+"\"}");
+                return content;
+            }
         }
-        catch (e){
+        else
+        {
             client.closeDb();
-            var content = JSON.parse("{\"result\":\"fail\",\"type\":\"db error\",\"reason\":\"MongoError: "+e.message+"\"}");
-            return content;
+            return JSON.parse("{\"result\":\"fail\",\"type\":\"db error\",\"reason\":\"collection not exist\"}");
         }
     }
     else
     {
-        client.closeDb();
-        return JSON.parse("{\"result\":\"fail\",\"type\":\"db error\",\"reason\":\"collection not exist\"}");
+        return response;
     }
 }
 async function containsCollection(client,collectionName)
@@ -52,31 +65,46 @@ async function containsCollection(client,collectionName)
 }
 async function getCollectionList(uri,dbname,client)
 {
-    await client.init(uri,dbname);
-    client.closeDb()
-    return client.collections;
+    var response = await client.init(uri,dbname);
+    if(response.result=='success')
+    {
+        client.closeDb()
+        return client.collections;
+    }
+    else
+    {
+        return response;
+    }
 }
 async function renameCollection(uri,dbname,client,targetName,reSetName)
 {
-    await client.init(uri,dbname);
-    var indication = await containsCollection(client,targetName);
-    if(indication)
+    var response = await client.init(uri,dbname);
+    if(response.result=='success')
     {
-        try{
-            await client.db.collection(targetName).rename(reSetName,false);
-            client.closeDb();
-            return JSON.parse("{\"result\":\"success\"}");
+        var indication1 = await containsCollection(client,targetName);
+        var indication2 = await containsCollection(client,reSetName);
+        if(indication1&&!indication2)
+        {
+            try{
+                await client.db.collection(targetName).rename(reSetName,false);
+                client.closeDb();
+                return JSON.parse("{\"result\":\"success\"}");
+            }
+            catch(e)
+            {
+                client.closeDb();
+                return JSON.parse("{\"result\":\"fail\",\"type\":\"db error\",\"reason\":\"MongoError: "+e.message+"\"}");
+            }
         }
-        catch(e)
+        else 
         {
             client.closeDb();
-            return JSON.parse("{\"result\":\"fail\",\"type\":\"db error\",\"reason\":\"MongoError: "+e.message+"\"}");
+            return JSON.parse("{\"result\":\"fail\",\"type\":\"db error\",\"reason\":\"collection not exist or duplicate name with other collections\"}");
         }
     }
     else
     {
-        client.closeDb();
-        return JSON.parse("{\"result\":\"fail\",\"type\":\"db error\",\"reason\":\"collection not exist\"}");
+        return response;
     }
 }
 
