@@ -8,6 +8,8 @@ const fs = require("fs");
 const appSettings = JSON.parse(fs.readFileSync("appSettings.json"));
 const dbUri = appSettings.database.mongo_uri;
 const Dbclient = require('./dbManager');
+var {ObjectID} = require('mongodb');
+const productService = require('./entities_service/Product');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -48,25 +50,29 @@ async function doSomething()
 {
    var client = new Dbclient();
    //var response1 = await categoryService.createCategory(dbUri,'Grocery','drink',client);
-   var response2 = await categoryService.renameCollection(dbUri,'Grocery',client,'chicken','Chicken');
+   //var response1 = await productService.getProductInfoWithId(dbUri,'Grocery','Fruit',client,"5eac3f15faf6cf0e786b541d"));
+   //var response1 = await productService.getProductListFromCollection(dbUri,'Grocery','Fruit',client);
    //var response2 = await categoryService.deleteCategory(dbUri,'Grocery','drink',client);
-  //  if (response1.result=='fail')
-  //  {
-  //    console.log('response1:');
-  //    console.log(response1.reason);
-  //  }
-  //  else
-  //  {
-  //    console.log('create success');
-  //  }
+   var response1 = await productService.insertOneProductToCollection(dbUri,'Grocery','food',client,{name:"chocolate"});
+   var list = await productService.getProductListFromCollection(dbUri,'Grocery','food',client);
+   var response2 = await productService.removeOneProductFromCollection(dbUri,'Grocery','food',client,list[0]._id);
+   if (response1.result=='fail')
+   {
+     console.log('response1:');
+     console.log(response1.reason);
+   }
+   else
+   {
+     console.log(response1);
+   }
    if (response2.result=='fail')
    {
-     console.log('response2:');
+     console.log('response1:');
      console.log(response2.reason);
    }
    else
    {
-     console.log('rename success');
+     console.log(response2);
    }
 }
 
