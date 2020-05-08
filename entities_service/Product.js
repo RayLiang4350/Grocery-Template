@@ -6,19 +6,14 @@ async function getProductInfoWithId(uri,dbname,collectionName,client,objectId)
     if(response.result == 'success')
     {
         try{
-            var object = await client.db.collection(collectionName).find({_id:id}).toArray();
-            if(object.length>0)
+            var object = await client.db.collection(collectionName).findOne({_id:id});
+            if(typeof(object.quntity_type)!="undefined")
             {
-                var quantity_type = await client.db.collection('Quntity_type').find(object[0].quntity_type).toArray();
-                object[0].quntity_type = quantity_type[0];
-                client.closeDb();
-                return object[0];
+                var quantity_type = await client.db.collection('Quntity_type').find(object.quntity_type).toArray();
+                object.quntity_type = quantity_type[0];
             }
-            else
-            {
-                client.closeDb();
-                return JSON.parse("{\"result\":\"fail\",\"type\":\"fetch error\",\"reason\":\"item not exist\"}");
-            }
+            client.closeDb();
+            return object;
         }
         catch(e)
         {
@@ -42,8 +37,11 @@ async function getProductListFromCollection(uri,dbname,collectionName,client)
             if(object.length>0)
             {
                 for(element of object) {
-                    var quantity_type = await client.db.collection('Quntity_type').find(element.quntity_type).toArray();
-                    element.quntity_type = quantity_type[0];
+                    if(typeof(element.quntity_type)!="undefined")
+                    {
+                         var quantity_type = await client.db.collection('Quntity_type').find(element.quntity_type).toArray();
+                         element.quntity_type = quantity_type[0];
+                    }
                 };
                 client.closeDb();
                 return object;
@@ -65,15 +63,71 @@ async function getProductListFromCollection(uri,dbname,collectionName,client)
         return response;
     }
 }
+
+async function getOneProductWithAttributes(uri,dbname,collectionName,client,attributes)
+{
+    var response = await client.init(uri,dbname);
+    if(response.result == 'success')
+    {
+        try{
+            var object = await client.db.collection(collectionName).findOne(attributes);
+            if(typeof(object.quntity_type)!="undefined")
+            {
+                var quantity_type = await client.db.collection('Quntity_type').find(object.quntity_type).toArray();
+                object.quntity_type = quantity_type[0];
+            }
+            client.closeDb();
+            return object;
+        }
+        catch(e)
+        {
+            client.closeDb();
+            return JSON.parse("{\"result\":\"fail\",\"type\":\"db error\",\"reason\":\"MongoError: "+e.message+"\"}");
+        }
+    }
+    else
+    {
+        return response;
+    }
+}
+async function getProdcutListWithAttributes(uri,dbname,collectionName,client,attributes)
+{
+    var response = await client.init(uri,dbname);
+    if(response.result == 'success')
+    {
+        try{
+            var object = await client.db.collection(collectionName).find(attributes).toArray();
+            for(element of object) {
+                if(typeof(element.quntity_type)!="undefined")
+                {
+                   var quantity_type = await client.db.collection('Quntity_type').find(element.quntity_type).toArray();
+                   element.quntity_type = quantity_type[0];
+                }
+            };
+            client.closeDb();
+            return object;
+        }
+        catch(e)
+        {
+            client.closeDb();
+            return JSON.parse("{\"result\":\"fail\",\"type\":\"db error\",\"reason\":\"MongoError: "+e.message+"\"}");
+        }
+    }
+    else
+    {
+        return response;
+    }
+}
 async function insertOneProductToCollection(uri,dbname,collectionName,client,object)
 {
     var response = await client.init(uri,dbname);
     if(response.result == 'success')
     {
         try{
-              await client.db.collection(collectionName).insertOne(object);
+              var response = await client.db.collection(collectionName).insertOne(object);
+              var objectId = response.insertedId.toString();
               client.closeDb();
-              return JSON.parse("{\"result\":\"success\"}");
+              return JSON.parse("{\"result\":\"success\",\"objectId\":\""+objectId+"\"}");
         }
         catch(e)
         {
@@ -118,13 +172,52 @@ async function removeOneProductFromCollection(uri,dbname,collectionName,client,o
     }
 }
 
-async function updateOneProductFromCollection(uri,dbname,collectionName,client,objectId,changedFileds)
+function generateUpdateQuery(oldObject,newObject)
 {
-
+    var result = {$set:{}};
+    for(let [key,value] of Object.entries(newObject))
+    {
+        if(oldObject[key]!=value)
+        {
+            result.$set[key] = newObject[key];
+        }
+    }
+    return result;
 }
+
+async function updateOneProductFromCollection(uri,dbname,collectionName,client,objectId,newObject)
+{
+    var response = await client.init(uri,dbname);
+    var id = new ObjectID(objectId);
+    if(response.result == 'success')
+    {
+        try{
+             var oldObject = (await client.db.collection(collectionName).find({_id:id}).toArray())[0];
+             var updateQuery = generateUpdateQuery(oldObject,newObject);
+             var response = await client.db.collection(collectionName).updateOne(
+                {_id:id},
+                updateQuery
+            );
+            client.closeDb();
+            return JSON.parse("{\"result\":\"success\"}");
+        }
+        catch(e)
+        {
+            client.closeDb();
+            return JSON.parse("{\"result\":\"fail\",\"type\":\"db error\",\"reason\":\"MongoError: "+e.message+"\"}");
+        }
+    }
+    else
+    {
+        return response;
+    }
+}
+
 
 module.exports.getProductInfoWithId = getProductInfoWithId;
 module.exports.getProductListFromCollection = getProductListFromCollection;
+module.exports.getOneProductWithAttributes = getOneProductWithAttributes;
+module.exports.getProductListWithAttributes = getProdcutListWithAttributes;
 module.exports.insertOneProductToCollection = insertOneProductToCollection;
 module.exports.removeOneProductFromCollection = removeOneProductFromCollection;
 module.exports.updateOneProductFromCollection = updateOneProductFromCollection;

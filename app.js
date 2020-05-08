@@ -53,18 +53,19 @@ async function doSomething()
    //var response1 = await productService.getProductInfoWithId(dbUri,'Grocery','Fruit',client,"5eac3f15faf6cf0e786b541d"));
    //var response1 = await productService.getProductListFromCollection(dbUri,'Grocery','Fruit',client);
    //var response2 = await categoryService.deleteCategory(dbUri,'Grocery','drink',client);
-   var response1 = await productService.insertOneProductToCollection(dbUri,'Grocery','food',client,{name:"chocolate"});
-   var list = await productService.getProductListFromCollection(dbUri,'Grocery','food',client);
-   var response2 = await productService.removeOneProductFromCollection(dbUri,'Grocery','food',client,list[0]._id);
-   if (response1.result=='fail')
-   {
-     console.log('response1:');
-     console.log(response1.reason);
-   }
-   else
-   {
-     console.log(response1);
-   }
+   //var response1 = await productService.insertOneProductToCollection(dbUri,'Grocery','food',client,{name:"chocolate",price:250});
+  //  var list = await productService.getProductListFromCollection(dbUri,'Grocery','food',client);
+  //  var response2 = await productService.removeOneProductFromCollection(dbUri,'Grocery','food',client,list[0]._id);
+   var response2 = await productService.getProductListWithAttributes(dbUri,'Grocery','food',client,{name:"chocolate"});
+  //  if (response1.result=='fail')
+  //  {
+  //    console.log('response1:');
+  //    console.log(response1.reason);
+  //  }
+  //  else
+  //  {
+  //    console.log(response1);
+  //  }
    if (response2.result=='fail')
    {
      console.log('response1:');
