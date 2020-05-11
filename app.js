@@ -54,9 +54,12 @@ async function doSomething()
    //var response1 = await productService.getProductListFromCollection(dbUri,'Grocery','Fruit',client);
    //var response2 = await categoryService.deleteCategory(dbUri,'Grocery','drink',client);
    //var response1 = await productService.insertOneProductToCollection(dbUri,'Grocery','food',client,{name:"chocolate",price:250});
-  //  var list = await productService.getProductListFromCollection(dbUri,'Grocery','food',client);
-  //  var response2 = await productService.removeOneProductFromCollection(dbUri,'Grocery','food',client,list[0]._id);
+   //var list = await productService.getProductListFromCollection(dbUri,'Grocery','food',client);
+   //var response2 = await productService.removeOneProductFromCollection(dbUri,'Grocery','food',client,list[0]._id);
+   //var response = await categoryService.getCollectionList(dbUri,'Grocery',client);
+   //var response = await categoryService.renameCollection(dbUri,'Grocery',client,'Fruit','Meat');
    var response2 = await productService.getProductListWithAttributes(dbUri,'Grocery','food',client,{name:"chocolate"});
+   //var response = await productService.updateOneProductFromCollection(dbUri,'Grocery','Fruit',client,"5eac3f15faf6cf0e786b541d",{name:"milk",price:140})
   //  if (response1.result=='fail')
   //  {
   //    console.log('response1:');
