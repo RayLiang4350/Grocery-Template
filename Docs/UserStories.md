@@ -1,4 +1,4 @@
-1. Customer can put products and view them into shopping cart.
+1. Customer can put products and view them in shopping cart.
      - Product should be check if not out of stock.
      - Customer info should be store in their cookies.
      - Customer can view product by category.
