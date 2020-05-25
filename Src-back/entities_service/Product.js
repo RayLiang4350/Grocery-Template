@@ -36,13 +36,6 @@ async function getProductListFromCollection(uri,dbname,collectionName,client)
             var object = await client.db.collection(collectionName).find({}).toArray();
             if(object.length>0)
             {
-                for(element of object) {
-                    if(typeof(element.quntity_type)!="undefined")
-                    {
-                         var quantity_type = await client.db.collection('Quntity_type').find(element.quntity_type).toArray();
-                         element.quntity_type = quantity_type[0];
-                    }
-                };
                 client.closeDb();
                 return object;
             }
@@ -71,11 +64,6 @@ async function getOneProductWithAttributes(uri,dbname,collectionName,client,attr
     {
         try{
             var object = await client.db.collection(collectionName).findOne(attributes);
-            if(typeof(object.quntity_type)!="undefined")
-            {
-                var quantity_type = await client.db.collection('Quntity_type').find(object.quntity_type).toArray();
-                object.quntity_type = quantity_type[0];
-            }
             client.closeDb();
             return object;
         }
@@ -97,13 +85,6 @@ async function getProdcutListWithAttributes(uri,dbname,collectionName,client,att
     {
         try{
             var object = await client.db.collection(collectionName).find(attributes).toArray();
-            for(element of object) {
-                if(typeof(element.quntity_type)!="undefined")
-                {
-                   var quantity_type = await client.db.collection('Quntity_type').find(element.quntity_type).toArray();
-                   element.quntity_type = quantity_type[0];
-                }
-            };
             client.closeDb();
             return object;
         }
