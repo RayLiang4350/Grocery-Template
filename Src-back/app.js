@@ -4,9 +4,12 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
+
+//debug info
 // const categoryService = require('./entities_service/Category');
 // const Dbclient = require('./dbManager');
 // var {ObjectID} = require('mongodb');
+// const dbUri = 'mongodb+srv://RayLiang:tH34rwj5XWjZqzgD@test-x7g7w.mongodb.net/test?retryWrites=true&w=majority';
 // const productService = require('./entities_service/Product');
 
 var productRouter = require('./routes/ProductRouter');
@@ -56,15 +59,16 @@ app.listen(3000)
 // {
 //    var client = new Dbclient();
 //    //var response1 = await categoryService.createCategory(dbUri,'Grocery','drink',client);
-//    //var response1 = await productService.getProductInfoWithId(dbUri,'Grocery','Fruit',client,"5eac3f15faf6cf0e786b541d"));
+//    var response1 = await productService.getProductInfoWithId(dbUri,'Grocery',client,"5eac3f15faf6cf0e786b541d");
+//    console.log(response1);
 //    //var response1 = await productService.getProductListFromCollection(dbUri,'Grocery','Fruit',client);
 //    //var response2 = await categoryService.deleteCategory(dbUri,'Grocery','drink',client);
 //    //var response1 = await productService.insertOneProductToCollection(dbUri,'Grocery','food',client,{name:"chocolate",price:250});
 //    //var list = await productService.getProductListFromCollection(dbUri,'Grocery','food',client);
 //    //var response2 = await productService.removeOneProductFromCollection(dbUri,'Grocery','food',client,list[0]._id);
 //    //var response = await categoryService.getCollectionList(dbUri,'Grocery',client);
-//    //var response = await categoryService.renameCollection(dbUri,'Grocery',client,'Fruit','Meat');
-//    var response2 = await productService.getProductListWithAttributes(dbUri,'Grocery','food',client,{name:"chocolate"});
+//    // var response = await categoryService.renameCollection(dbUri,'Grocery',client,'Fruit','Products');
+//    //var response2 = await productService.getProductListWithAttributes(dbUri,'Grocery','food',client,{name:"chocolate"});
 //    //var response = await productService.updateOneProductFromCollection(dbUri,'Grocery','Fruit',client,"5eac3f15faf6cf0e786b541d",{name:"milk",price:140})
 //   //  if (response1.result=='fail')
 //   //  {
@@ -75,15 +79,15 @@ app.listen(3000)
 //   //  {
 //   //    console.log(response1);
 //   //  }
-//    if (response2.result=='fail')
-//    {
-//      console.log('response1:');
-//      console.log(response2.reason);
-//    }
-//    else
-//    {
-//      console.log(response2);
-//    }
+//   //  if (response2.result=='fail')
+//   //  {
+//   //    console.log('response1:');
+//   //    console.log(response2.reason);
+//   //  }
+//   //  else
+//   //  {
+//   //    console.log(response2);
+//   //  }
 // }
 
 // doSomething()

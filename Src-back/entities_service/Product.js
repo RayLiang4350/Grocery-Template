@@ -1,16 +1,16 @@
 var {ObjectID} = require('mongodb');
-async function getProductInfoWithId(uri,dbname,collectionName,client,objectId)
+async function getProductInfoWithId(uri,dbname,client,objectId,product_collection,category_collection)
 {
     var response = await client.init(uri,dbname);
     id = new ObjectID(objectId);
     if(response.result == 'success')
     {
         try{
-            var object = await client.db.collection(collectionName).findOne({_id:id});
-            if(typeof(object.quntity_type)!="undefined")
+            var object = await client.db.collection(product_collection).findOne({_id:id});
+            if(typeof(object.category)!="undefined")
             {
-                var quantity_type = await client.db.collection('Quntity_type').find(object.quntity_type).toArray();
-                object.quntity_type = quantity_type[0];
+                var category = await client.db.collection(category_collection).findOne({_id:object.category});
+                object.category = category;
             }
             client.closeDb();
             return object;
@@ -27,15 +27,63 @@ async function getProductInfoWithId(uri,dbname,collectionName,client,objectId)
     }
 }
 
-async function getProductListFromCollection(uri,dbname,collectionName,client)
+async function getProductListFromCollection(uri,dbname,product_collection,category_collection,client,sortValue,assending,startValue,limit)
 {
     var response = await client.init(uri,dbname);
     if(response.result == 'success')
     {
         try{
-            var object = await client.db.collection(collectionName).find({}).toArray();
+            var sortObject = {[sortValue]:(assending)?1:-1};
+            var object = await client.db.collection(product_collection).find().skip(startValue).sort(sortObject).limit(limit).toArray();
             if(object.length>0)
             {
+                for(let i=0;i<object.length;i++)
+                {
+                    if(typeof(object[i].category)!="undefined")
+                    {
+                        var category = await client.db.collection(category_collection).findOne({_id:object[i].category});
+                        object[i].category = category;
+                    }
+                }
+                client.closeDb();
+                return object;
+            }
+            else
+            {
+                client.closeDb();
+                return JSON.parse("{\"result\":\"fail\",\"type\":\"fetch error\",\"reason\":\"collection has no item\"}");
+            }
+        }
+        catch(e)
+        {
+            client.closeDb();
+            return JSON.parse("{\"result\":\"fail\",\"type\":\"db error\",\"reason\":\"MongoError: "+e.message+"\"}");
+        }
+    }
+    else
+    {
+        return response;
+    }
+}
+async function getProductListByCategory(uri,dbname,product_collection,category_collection,categoryId,client,sortValue,assending,startValue,limit)
+{
+    var response = await client.init(uri,dbname);
+    var id = new ObjectID(categoryId);
+    if(response.result == 'success')
+    {
+        try{
+            var sortObject = {[sortValue]:(assending)?1:-1};
+            var object = await client.db.collection(product_collection).find({category:id}).skip(startValue).sort(sortObject).limit(limit).toArray();
+            if(object.length>0)
+            {
+                for(let i=0;i<object.length;i++)
+                {
+                    if(typeof(object[i].category)!="undefined")
+                    {
+                        var category = await client.db.collection(category_collection).findOne({_id:object[i].category});
+                        object[i].category = category;
+                    }
+                }
                 client.closeDb();
                 return object;
             }
@@ -202,3 +250,4 @@ module.exports.getProductListWithAttributes = getProdcutListWithAttributes;
 module.exports.insertOneProductToCollection = insertOneProductToCollection;
 module.exports.removeOneProductFromCollection = removeOneProductFromCollection;
 module.exports.updateOneProductFromCollection = updateOneProductFromCollection;
+module.exports.getProductListByCategory = getProductListByCategory;
