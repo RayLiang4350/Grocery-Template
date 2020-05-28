@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Router} from '@angular/router';
 import{ environment } from '../../environments/environment';
 
 @Injectable({
@@ -14,9 +13,15 @@ export class ProductService{
     {
     }
 
-    getAllProducts()
+    //fetch all products from backend
+    getAllProducts(pageNumber:number=1)
     {
-        return this.http.get(this.SERVER_URL+'/products');
+        return this.http.get(this.SERVER_URL+'/products',{
+            params:{
+                page:pageNumber.toString()
+            }
+        });
     }
+
     
 }

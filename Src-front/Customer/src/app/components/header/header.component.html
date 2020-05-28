@@ -3,12 +3,12 @@
     <div id="top-header">
         <div class="container">
             <ul class="header-links pull-left">
-                <li><a href="#"><i class="fa fa-phone"></i> +021-95-51-84</a></li>
+                <li><a href="#"><i class="fa fa-phone"></i> 111-111-1111</a></li>
                 <li><a href="#"><i class="fa fa-envelope-o"></i> email@email.com</a></li>
                 <li><a href="#"><i class="fa fa-map-marker"></i> 1734 Stonecoal Road</a></li>
             </ul>
             <ul class="header-links pull-right">
-                <li><a href="#"><i class="fa fa-dollar"></i> USD</a></li>
+                <li><a href="#"><i class="fa fa-dollar"></i> CAD </a></li>
                 <li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
             </ul>
         </div>
@@ -55,17 +55,17 @@
                             <a href="#">
                                 <i class="fa fa-heart-o"></i>
                                 <span>Your Wishlist</span>
-                                <div class="qty">2</div>
+                                <div class="qty">0</div>
                             </a>
                         </div>
                         <!-- /Wishlist -->
 
                         <!-- Cart -->
                         <div class="dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" style="cursor: pointer;">
                                 <i class="fa fa-shopping-cart"></i>
                                 <span>Your Cart</span>
-                                <div class="qty">3</div>
+                                <div class="qty">0</div>
                             </a>
                             <div class="cart-dropdown">
                                 <div class="cart-list">
@@ -92,12 +92,12 @@
                                     </div>
                                 </div>
                                 <div class="cart-summary">
-                                    <small>3 Item(s) selected</small>
-                                    <h5>SUBTOTAL: $2940.00</h5>
+                                    <small>0 Item(s) selected</small>
+                                    <h5>SUBTOTAL:{{0|currency:'CAD'}}</h5>
                                 </div>
                                 <div class="cart-btns">
-                                    <a href="#">View Cart</a>
-                                    <a href="#">Checkout  <i class="fa fa-arrow-circle-right"></i></a>
+                                    <a routerLink="/cart">View Cart</a>
+                                    <a routerLink="/checkout">Checkout  <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
                         </div>

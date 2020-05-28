@@ -1,0 +1,7 @@
+.disabled{
+    cursor:not-allowed;
+}
+.justify_image{
+    height: inherit; /* adjust as needed */
+    object-fit: contain;
+}
