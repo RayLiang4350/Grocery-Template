@@ -15,6 +15,7 @@ var cors = require('cors');
 var productRouter = require('./routes/ProductRouter');
 var usersRouter = require('./routes/users');
 var pictureRouter = require('./routes/PictureRouter');
+var categoryRouter = require('./routes/CategoryRouter');
 
 var app = express();
 
@@ -37,6 +38,7 @@ app.use(cors({
 app.use('/api/products',productRouter);
 app.use('/users', usersRouter);
 app.use('/picture',pictureRouter);
+app.use('/api/category',categoryRouter);
 
 // // catch 404 and forward to error handler
 // app.use(function(req, res, next) {
